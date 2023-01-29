@@ -1,13 +1,38 @@
 const express = require('express');
+const RFID = require('../model/rfid');
+const { resetRFID } = require('../helpers/rfid');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('It is here test');
+const handleRfidInput = async (input) => {
+  const { uid, device_name, antenna } = input;
+
+  await RFID.create(
+    { _id: uid, device_name: device_name, antenna: antenna },
+    (err) => {
+      if (err) return console.log('ERROR (REGISTER RFID):', err);
+    }
+  );
+};
+
+router.get('/', async (req, res) => {
+  const data = await RFID.find({});
+  res.send(data);
 });
 
 router.post('/', (req, res) => {
   console.log('JSON Provided: ', req.body);
   res.send(req.body);
+  handleRfidInput(req.body);
+});
+
+router.delete('/reset', (req, res) => {
+  const status = resetRFID();
+
+  if (status) {
+    res.status(400).send('RFID DB RESET');
+  } else {
+    res.status(500).send('RFID DB RESET ERROR!!!');
+  }
 });
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const rfidRouter = require('./routes/rfid');
+const cardRouter = require('./routes/card');
 const app = express();
 const port = 8080;
 
@@ -22,3 +23,5 @@ app.listen(port, () => {
 app.use(express.json());
 
 app.use('/rfid', rfidRouter);
+
+app.use('/card', cardRouter);
