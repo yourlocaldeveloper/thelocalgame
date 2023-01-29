@@ -1,5 +1,6 @@
 const express = require('express');
 const RFID = require('../model/rfid');
+const Card = require('../model/card');
 const { resetRFID } = require('../helpers/rfid');
 const router = express.Router();
 
@@ -17,6 +18,36 @@ const handleRfidInput = async (input) => {
 router.get('/', async (req, res) => {
   const data = await RFID.find({});
   res.send(data);
+});
+
+router.get('/position/:rfid/:id', async (req, res) => {
+  const data = await RFID.find({
+    device_name: req.params.rfid,
+    antenna: req.params.id,
+  });
+  let ids = [];
+
+  if (data) {
+    data.forEach(async (data) => {
+      const { _id: cardID } = data;
+      ids.push(cardID);
+    });
+  }
+
+  Card.find({ _id: { $in: ids } }, (err, cardData) => {
+    if (err) return console.log('error');
+
+    let returnCards = [];
+
+    if (cardData) {
+      cardData.forEach(async (singleCard) => {
+        const { card: cardValue } = singleCard;
+        returnCards.push(cardValue);
+      });
+    }
+
+    return res.send(returnCards);
+  });
 });
 
 router.post('/', (req, res) => {
