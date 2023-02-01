@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "dev": "yarn workspace tlg_ffx next dev",
+    "devbff": "yarn workspace tlg_bff node app.js",
     "build": "yarn workspace tlg_ffx next build",
     "start": "yarn workspace tlg_ffx next start",
     "lint": "yarn workspace tlg_ffx next lint"

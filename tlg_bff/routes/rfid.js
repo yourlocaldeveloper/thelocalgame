@@ -60,7 +60,7 @@ router.delete('/reset', (req, res) => {
   const status = resetRFID();
 
   if (status) {
-    res.status(400).send('RFID DB RESET');
+    res.status(200).send('RFID DB RESET');
   } else {
     res.status(500).send('RFID DB RESET ERROR!!!');
   }
