@@ -3,7 +3,7 @@ import Image from 'next/image';
 import logo from '../../public/images/logo.png';
 import { CardOverlay } from '../CardOverlay';
 import { PlayerOverlay } from '../PlayerOverlay';
-import { IPlayerData } from '../../pages/_app';
+import { IPlayerData } from '../../pages';
 
 import styles from './Main.module.scss';
 

@@ -1,0 +1,26 @@
+@font-face {
+  font-family: cocogoose;
+  src: url('../../styles/fonts/Cocogoose\ Pro\ Light.ttf');
+}
+
+.main {
+  background-color: rgb(0, 255, 0);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: cocogoose;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.playerCardHolder {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  margin-left: 25px;
+  width: 33%;
+  height: 100%;
+}

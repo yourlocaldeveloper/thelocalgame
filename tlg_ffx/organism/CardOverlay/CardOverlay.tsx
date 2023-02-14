@@ -78,7 +78,9 @@ export const CardOverlay: React.FC<CardOverlayProps> = (props) => {
       </button>
       <div className={styles.registerWrapper}>
         <h1>{statusMessage}</h1>
-        <button onClick={() => submitReset()}>Reset RFID</button>
+        <button onClick={() => submitReset()} className={styles.registerButton}>
+          Reset RFID
+        </button>
       </div>
       <div className={styles.cardWrapper}>{cardView}</div>
     </div>

@@ -1,0 +1,122 @@
+@keyframes nameFlash {
+  0% {
+    background-color: #ef4222;
+  }
+  50% {
+    background-color: rgb(102, 0, 0);
+  }
+  100% {
+    background-color: #ef4222;
+  }
+}
+
+.number {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.playerView {
+  width: 350px;
+  height: 155px;
+  padding: 5px;
+  background: linear-gradient(
+      to top,
+      rgb(14, 14, 14) 0%,
+      rgb(14, 14, 14) 85%,
+      transparent 85%
+    )
+    no-repeat;
+}
+
+.topView {
+  display: flex;
+  height: 100px;
+}
+
+.topLeftView {
+  margin-top: 25px;
+  height: 75px;
+  width: 75px;
+  background-color: white;
+}
+
+.topRightView {
+  width: calc(100% - 60px);
+}
+
+.playerIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.cards {
+  width: 100%;
+  height: 50px;
+
+  img {
+    margin-left: 5px;
+  }
+}
+
+.playerName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 50px;
+}
+
+.position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  font-size: 15px;
+}
+
+.playerNameView {
+  display: flex;
+  text-align: center;
+  color: white;
+  font-size: 25px;
+  background-color: #2b2b2b;
+  margin-left: 5px;
+}
+
+.playNameViewActive {
+  animation-name: nameFlash;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+.bottomView {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 100%;
+  margin-top: 5px;
+  text-align: center;
+  color: white;
+  font-size: 25px;
+}
+
+.stack {
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  height: 50px;
+  width: 75px;
+  background-color: #2b2b2b;
+}
+
+.action {
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: calc(100% - 60px);
+  background-color: #2b2b2b;
+  margin-left: 5px;
+}
