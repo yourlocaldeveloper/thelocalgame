@@ -1,0 +1,66 @@
+.button {
+  position: relative;
+
+  background-color: #ac1e1e;
+  box-shadow: inset 0px 1px 0px #ac1e1e, 0px 5px 0px 0px rgb(97, 8, 8),
+    0px 0px 0px #fff;
+  border-radius: 5px;
+  border: 0;
+  margin: 0 2px;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 600;
+  text-align: center;
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.button:enabled:active {
+  top: 3px;
+  box-shadow: inset 0px 1px 0px #ac1e1e, 0px 2px 0px 0px rgb(97, 8, 8),
+    0px 0px 0px #fff;
+}
+
+.button:disabled {
+  background-color: #580f0f;
+  box-shadow: inset 0px 1px 0px #580f0f, 0px 5px 0px 0px #270606,
+    0px 0px 0px #fff;
+}
+
+.sm {
+  width: 100px;
+
+  .icon {
+    height: 50px;
+    width: 50px;
+  }
+}
+
+.md {
+  width: 200px;
+
+  .icon {
+    height: 50px;
+    width: 50px;
+  }
+}
+
+.lg {
+  width: 300px;
+
+  .icon {
+    height: 50px;
+    width: 50px;
+  }
+}
+
+.end {
+  margin-left: auto;
+}
+
+.textIcon {
+  font-size: 15px;
+}

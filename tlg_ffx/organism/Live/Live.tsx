@@ -1,5 +1,4 @@
 import React from 'react';
-import cn from 'classnames';
 
 import styles from './Live.module.scss';
 import { PlayerCard } from './components/PlayerCard';

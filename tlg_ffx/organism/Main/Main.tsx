@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
-import logo from '../../public/images/logo.png';
 import { CardOverlay } from '../CardOverlay';
 import { PlayerOverlay } from '../PlayerOverlay';
 import { IPlayerData } from '../../pages';
 
+import { TopRow } from './components/TopRow';
 import styles from './Main.module.scss';
 
 interface MainProps {
@@ -23,22 +22,7 @@ export const Main: React.FC<MainProps> = (props) => {
       )}
       <PlayerOverlay />
       <div className={styles.main}>
-        <div className={styles.imageWrapper}>
-          <Image
-            src={logo}
-            alt='The Local Game Logo'
-            width={500}
-            height={500}
-          />
-        </div>
-        <div className={styles.buttonWrapper}>
-          <button>Players</button>
-          <button>Start New Hand</button>
-          <button>Reset Game</button>
-          <button onClick={() => setShowCardOverlay(!showCardOverlay)}>
-            Register Cards
-          </button>
-        </div>
+        <TopRow />
       </div>
     </>
   );

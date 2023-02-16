@@ -5,30 +5,5 @@
   height: 100%;
   width: 100%;
 
-  button {
-    height: 150px;
-    width: 150px;
-    background-color: #4b8087;
-    color: white;
-    border: none;
-    font-size: 25px;
-    padding: 5px;
-  }
-
-  button:active,
-  button:hover {
-    background-color: #315458;
-  }
-}
-
-.imageWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.buttonWrapper {
-  height: 100%;
-  display: flex;
-  justify-content: space-evenly;
+  font-family: Arial, Helvetica, sans-serif;
 }
