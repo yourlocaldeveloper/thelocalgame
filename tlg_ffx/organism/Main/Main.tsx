@@ -4,6 +4,10 @@ import { PlayerOverlay } from '../PlayerOverlay';
 import { IPlayerData } from '../../pages';
 
 import { TopRow } from './components/TopRow';
+import { InfoRow } from './components/InfoRow';
+import { CardPlayerRow } from './components/CardPlayerRow';
+import { CommunityRow } from './components/CommunityRow';
+import { SettingsRow } from './components/SettingsRow';
 import styles from './Main.module.scss';
 
 interface MainProps {
@@ -23,6 +27,10 @@ export const Main: React.FC<MainProps> = (props) => {
       <PlayerOverlay />
       <div className={styles.main}>
         <TopRow />
+        <InfoRow />
+        <CardPlayerRow />
+        <CommunityRow />
+        <SettingsRow />
       </div>
     </>
   );

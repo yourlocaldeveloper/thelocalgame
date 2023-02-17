@@ -11,19 +11,36 @@ export enum FuncButtonSize {
   Large = 'lg',
 }
 
-// TO-DO: Add color enum to change color through props
+export enum FuncButtonColor {
+  Yellow,
+  Blue,
+  Green,
+  White,
+  Black,
+}
 
 interface FuncButtonProps {
   size: FuncButtonSize;
+  color?: FuncButtonColor;
   text?: string;
   logo?: IconProp;
   onClick?: () => void;
+  positionCorner?: boolean;
   positionEnd?: boolean;
   disabled?: boolean;
 }
 
 export const FuncButton: React.FC<FuncButtonProps> = (props) => {
-  const { size, text, logo, onClick, positionEnd, disabled } = props;
+  const {
+    size,
+    color,
+    text,
+    logo,
+    onClick,
+    positionCorner,
+    positionEnd,
+    disabled,
+  } = props;
 
   return (
     <button
@@ -32,6 +49,12 @@ export const FuncButton: React.FC<FuncButtonProps> = (props) => {
         [styles.sm]: size === FuncButtonSize.Small,
         [styles.md]: size === FuncButtonSize.Medium,
         [styles.lg]: size === FuncButtonSize.Large,
+        [styles.yellow]: color === FuncButtonColor.Yellow,
+        [styles.blue]: color === FuncButtonColor.Blue,
+        [styles.green]: color === FuncButtonColor.Green,
+        [styles.white]: color === FuncButtonColor.White,
+        [styles.black]: color === FuncButtonColor.Black,
+        [styles.corner]: positionCorner,
         [styles.end]: positionEnd,
       })}
       disabled={disabled}

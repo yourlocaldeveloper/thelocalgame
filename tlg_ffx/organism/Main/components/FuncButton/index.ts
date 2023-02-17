@@ -1,1 +1,1 @@
-export { FuncButton, FuncButtonSize } from './FuncButton';
+export { FuncButton, FuncButtonSize, FuncButtonColor } from './FuncButton';
