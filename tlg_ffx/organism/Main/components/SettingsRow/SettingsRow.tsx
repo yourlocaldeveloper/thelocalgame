@@ -2,28 +2,33 @@ import React, { useState } from 'react';
 
 import styles from './SettingsRow.module.scss';
 import { FuncButton, FuncButtonSize, FuncButtonColor } from '../FuncButton';
+import { GameStateEnum } from '../../Main.helpers';
 
-interface SettingsRowProps {}
+interface SettingsRowProps {
+  gameState: GameStateEnum;
+  setGameState: (gameState: GameStateEnum) => void;
+}
 
 export const SettingsRow: React.FC<SettingsRowProps> = (props) => {
-  const {} = props;
+  const { gameState, setGameState } = props;
 
   const [showStartGame, setShowStartGame] = useState(false);
+  const [showPlayerAction, setShowPlayerAction] = useState(false);
 
   return (
     <>
-      {showStartGame && (
+      {gameState === GameStateEnum.HOME && (
         <div className={styles.settingsRow}>
           <FuncButton size={FuncButtonSize.Large} text={'Start Game'} />
         </div>
       )}
-      {!showStartGame && (
+      {gameState === GameStateEnum.SETUP && (
         <>
           <div className={styles.settingsNamesRow}>
             <FuncButton
               size={FuncButtonSize.Medium}
               color={FuncButtonColor.Black}
-              text={'Dealer Position'}
+              text={'Dealer'}
             />
             <FuncButton
               size={FuncButtonSize.Medium}
@@ -48,6 +53,14 @@ export const SettingsRow: React.FC<SettingsRowProps> = (props) => {
             />
           </div>
         </>
+      )}
+      {gameState === GameStateEnum.GAME && (
+        <div className={styles.betRow}>
+          <FuncButton size={FuncButtonSize.Medium} text={'Fold'} />
+          <FuncButton size={FuncButtonSize.Medium} text={'Check'} />
+          <FuncButton size={FuncButtonSize.Medium} text={'Bet'} />
+          <FuncButton size={FuncButtonSize.Medium} text={'All In'} />
+        </div>
       )}
     </>
   );

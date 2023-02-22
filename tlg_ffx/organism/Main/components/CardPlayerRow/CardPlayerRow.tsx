@@ -3,11 +3,14 @@ import React from 'react';
 import styles from './CardPlayerRow.module.scss';
 import { FuncButton, FuncButtonSize, FuncButtonColor } from '../FuncButton';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { GameStateEnum } from '../../Main.helpers';
 
-interface CardPlayerRowProps {}
+interface CardPlayerRowProps {
+  gameState: GameStateEnum;
+}
 
 export const CardPlayerRow: React.FC<CardPlayerRowProps> = (props) => {
-  const {} = props;
+  const { gameState } = props;
 
   return (
     <>

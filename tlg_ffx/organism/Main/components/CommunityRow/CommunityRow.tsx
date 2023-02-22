@@ -4,33 +4,42 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import styles from './CommunityRow.module.scss';
 import { FuncButton, FuncButtonSize, FuncButtonColor } from '../FuncButton';
 import { CommunityCards } from './components/CommunityCards';
+import { GameStateEnum } from '../../Main.helpers';
 
-interface CommunityRowProps {}
+interface CommunityRowProps {
+  gameState: GameStateEnum;
+}
 
 export const CommunityRow: React.FC<CommunityRowProps> = (props) => {
-  const {} = props;
+  const { gameState } = props;
 
-  const [showCommunityCards, setShowCommunityCards] = useState(false);
+  const [showCommunityCards, setShowCommunityCards] = useState(true);
 
   return (
     <>
-      {showCommunityCards && (
+      {gameState != GameStateEnum.SETUP && (
         <>
           <div className={styles.communityRow}>
-            <FuncButton size={FuncButtonSize.Medium} text={'Miss Deal'} />
+            <FuncButton
+              size={FuncButtonSize.Medium}
+              text={'Miss Deal'}
+              disabled={gameState != GameStateEnum.GAME}
+            />
             <CommunityCards />
             <FuncButton size={FuncButtonSize.Medium} text={'Hide Graphics'} />
           </div>
-          <div className={styles.playerInfoRow}>
-            <FuncButton
-              size={FuncButtonSize.Large}
-              color={FuncButtonColor.Black}
-              text={'[5] Aaron - Stack £40'}
-            />
-          </div>
+          {gameState === GameStateEnum.GAME && (
+            <div className={styles.playerInfoRow}>
+              <FuncButton
+                size={FuncButtonSize.Large}
+                color={FuncButtonColor.Black}
+                text={'[5] Aaron - Stack £40'}
+              />
+            </div>
+          )}
         </>
       )}
-      {!showCommunityCards && (
+      {gameState === GameStateEnum.SETUP && (
         <>
           <div className={styles.blindsRow}>
             <FuncButton
