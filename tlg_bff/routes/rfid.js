@@ -4,15 +4,56 @@ const Card = require('../model/card');
 const { resetRFID } = require('../helpers/rfid');
 const router = express.Router();
 
-const handleRfidInput = async (input) => {
+const handleRfidInput = (input, io) => {
   const { uid, device_name, antenna } = input;
+  let rfidRoute = 'rfid';
 
-  await RFID.create(
-    { _id: uid, device_name: device_name, antenna: antenna },
-    (err) => {
-      if (err) return console.log('ERROR (REGISTER RFID):', err);
+  const deviceOne = 'TLG_Device1';
+  const deviceTwo = 'TLG_Device2';
+
+  if (device_name === deviceOne) {
+    console.log('WORKS WITH DEVICE ONE');
+    switch (antenna) {
+      case 1:
+        rfidRoute = 'seatOne';
+        break;
+      case 4:
+        rfidRoute = 'seatTwo';
+        break;
+      case 8:
+        rfidRoute = 'seatThree';
+        break;
     }
-  );
+  } else if (device_name === deviceTwo) {
+    console.log('WORKS WITH DEVICE TWO');
+    switch (antenna) {
+      case 1:
+        rfidRoute = 'communityCards';
+        break;
+      case 2:
+        console.log('SENDING');
+        rfidRoute = 'seatFour';
+        break;
+      case 5:
+        rfidRoute = 'communityCards';
+        break;
+      case 6:
+        rfidRoute = 'communityCards';
+        break;
+    }
+  }
+
+  io.emit(rfidRoute, {
+    msg: 'RFID - Sending',
+    uid: uid,
+  });
+
+  // await RFID.create(
+  //   { _id: uid, device_name: device_name, antenna: antenna },
+  //   (err) => {
+  //     if (err) return console.log('ERROR (REGISTER RFID):', err);
+  //   }
+  // );
 };
 
 router.get('/', async (req, res) => {
@@ -51,9 +92,25 @@ router.get('/position/:rfid/:id', async (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  console.log('JSON Provided: ', req.body);
+  if (req.app.locals.disableRFIDRoute) {
+    console.log('JSON Denied: ', req.body);
+    res.send(req.body);
+  } else {
+    console.log('JSON Provided: ', req.body);
+    res.send(req.body);
+    const io = req.app.get('socketio');
+    handleRfidInput(req.body, io);
+  }
+});
+
+router.post('/stop', (req, res) => {
+  req.app.locals.disableRFIDRoute = true;
   res.send(req.body);
-  handleRfidInput(req.body);
+});
+
+router.post('/continue', (req, res) => {
+  req.app.locals.disableRFIDRoute = false;
+  res.send(req.body);
 });
 
 router.delete('/reset', (req, res) => {

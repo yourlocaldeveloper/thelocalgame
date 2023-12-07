@@ -13,6 +13,18 @@ const io = new Server(server, {
   },
 });
 
+io.on('connection', (socket) => {
+  console.log('Tablet has connected to server.');
+});
+
+io.on('disconnect', (socket) => {
+  console.log('Tablet has disconnected to server.');
+});
+
+app.locals.disableRFIDRoute = false;
+
+app.set('socketio', io);
+
 // const main = async () => {
 //   await mongoose.connect('mongodb://127.0.0.1:27017/thelocalgame');
 //   console.log('DATABASE: Connected');
@@ -44,14 +56,6 @@ app.use(express.json());
 app.use('/rfid', rfidRouter);
 
 app.use('/card', cardRouter);
-
-io.on('connection', (socket) => {
-  console.log('Tablet has connected to server.');
-});
-
-io.on('disconnect', (socket) => {
-  console.log('Tablet has disconnected to server.');
-});
 
 server.listen(3000, () => {
   console.log('listening on *:3000');
