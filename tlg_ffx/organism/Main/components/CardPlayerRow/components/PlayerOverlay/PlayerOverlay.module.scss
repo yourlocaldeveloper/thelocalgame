@@ -1,0 +1,66 @@
+.main {
+  display: block;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  height: 400px;
+  width: 500px;
+  background-color: black;
+  overflow: hidden;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  border: solid 5px white;
+  border-radius: 10px;
+
+  input {
+    height: 30px;
+    width: 50%;
+  }
+}
+
+.stackInput {
+  text-align: center;
+}
+
+.submitWrapper {
+  margin-top: 25px;
+  height: 100px;
+
+  input {
+    height: 100%;
+  }
+}
+
+.submit {
+  background-color: #ac1e1e;
+  box-shadow: inset 0px 1px 0px #ac1e1e, 0px 5px 0px 0px rgb(97, 8, 8),
+    0px 0px 0px #fff;
+  border-radius: 5px;
+  border: 0;
+  margin: 0 2px;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background-color: #ac1e1e;
+  box-shadow: inset 0px 1px 0px #ac1e1e, 0px 5px 0px 0px rgb(97, 8, 8),
+    0px 0px 0px #fff;
+  border-radius: 5px;
+  border: 0;
+  margin: 0 2px;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 600;
+  text-align: center;
+
+  width: 50px;
+  height: 50px;
+}
