@@ -14,6 +14,20 @@ export const Live: React.FC = () => {
           position={'utg'}
           active
         />
+        <PlayerCard
+          name={'Adam Gill'}
+          stack={'£100'}
+          action={'£100 TO CALL'}
+          position={'utg'}
+          active
+        />
+        <PlayerCard
+          name={'Adam Gill'}
+          stack={'£100'}
+          action={'£100 TO CALL'}
+          position={'utg'}
+          active
+        />
       </div>
     </div>
   );

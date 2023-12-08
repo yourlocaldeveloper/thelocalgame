@@ -31,7 +31,6 @@ const handleRfidInput = (input, io) => {
         rfidRoute = 'communityCards';
         break;
       case 2:
-        console.log('SENDING');
         rfidRoute = 'seatFour';
         break;
       case 5:

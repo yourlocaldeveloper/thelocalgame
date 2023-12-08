@@ -1,5 +1,5 @@
-import { Main } from '../organism/Main';
+import { Live } from '../organism/Live';
 
 export default function HomePage(): JSX.Element {
-  return <Main />;
+  return <Live />;
 }
