@@ -2,7 +2,8 @@
   "name": "tlg_ffx",
   "version": "1.0.0",
   "devDependencies": {
-    "@types/react": "18.0.27",
+    "@types/react": "^18.2.45",
+    "@types/react-transition-group": "^4.4.10",
     "sass": "^1.57.1",
     "typescript": "4.9.4"
   },
@@ -10,6 +11,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "classnames": "^2.3.2"
+    "classnames": "^2.3.2",
+    "react-transition-group": "^4.4.5"
   }
 }

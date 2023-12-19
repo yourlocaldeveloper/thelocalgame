@@ -8,22 +8,22 @@ export const Live: React.FC = () => {
     <div className={styles.main}>
       <div className={styles.playerCardHolder}>
         <PlayerCard
-          name={'Adam Gill'}
-          stack={'£100'}
+          name={'MIGLE'}
+          stack={'€77+£42'}
           action={'£100 TO CALL'}
           position={'utg'}
           active
         />
         <PlayerCard
-          name={'Adam Gill'}
-          stack={'£100'}
+          name={'Aaron'}
+          stack={'100 x Kissies'}
           action={'£100 TO CALL'}
           position={'utg'}
           active
         />
         <PlayerCard
-          name={'Adam Gill'}
-          stack={'£100'}
+          name={'Bluse'}
+          stack={'100 x Scratches'}
           action={'£100 TO CALL'}
           position={'utg'}
           active
