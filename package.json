@@ -12,7 +12,7 @@
     "tlg_bff"
   ],
   "scripts": {
-    "dev": "yarn workspace tlg_ffx next dev",
+    "dev": "yarn workspace tlg_ffx next dev -p 3000",
     "devbff": "yarn workspace tlg_bff node app.js",
     "build": "yarn workspace tlg_ffx next build",
     "start": "yarn workspace tlg_ffx next start",

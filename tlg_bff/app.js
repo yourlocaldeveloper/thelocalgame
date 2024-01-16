@@ -15,6 +15,11 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('Tablet has connected to server.');
+
+  socket.on('initialPlayerData', (data) => {
+    console.log(data);
+    io.emit('initialPlayerData', data);
+  });
 });
 
 io.on('disconnect', (socket) => {
@@ -57,6 +62,6 @@ app.use('/rfid', rfidRouter);
 
 app.use('/card', cardRouter);
 
-server.listen(3000, () => {
+server.listen(3001, () => {
   console.log('listening on *:3000');
 });
