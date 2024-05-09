@@ -46,48 +46,10 @@ const handleRfidInput = (input, io) => {
     msg: 'RFID - Sending',
     uid: uid,
   });
-
-  // await RFID.create(
-  //   { _id: uid, device_name: device_name, antenna: antenna },
-  //   (err) => {
-  //     if (err) return console.log('ERROR (REGISTER RFID):', err);
-  //   }
-  // );
 };
 
 router.get('/', async (req, res) => {
-  const data = await RFID.find({});
-  res.send(data);
-});
-
-router.get('/position/:rfid/:id', async (req, res) => {
-  const data = await RFID.find({
-    device_name: req.params.rfid,
-    antenna: req.params.id,
-  });
-  let ids = [];
-
-  if (data) {
-    data.forEach(async (data) => {
-      const { _id: cardID } = data;
-      ids.push(cardID);
-    });
-  }
-
-  Card.find({ _id: { $in: ids } }, (err, cardData) => {
-    if (err) return console.log('error');
-
-    let returnCards = [];
-
-    if (cardData) {
-      cardData.forEach(async (singleCard) => {
-        const { card: cardValue } = singleCard;
-        returnCards.push(cardValue);
-      });
-    }
-
-    return res.send(returnCards);
-  });
+  res.send('What do you want to see here?');
 });
 
 router.post('/', (req, res) => {
@@ -103,23 +65,15 @@ router.post('/', (req, res) => {
 });
 
 router.post('/stop', (req, res) => {
+  console.log('[NOTICE]: Stop RFID Card Information Being Sent');
   req.app.locals.disableRFIDRoute = true;
   res.send(req.body);
 });
 
 router.post('/continue', (req, res) => {
+  console.log('[NOTICE]: Allow RFID Card Information Being Sent');
   req.app.locals.disableRFIDRoute = false;
   res.send(req.body);
-});
-
-router.delete('/reset', (req, res) => {
-  const status = resetRFID();
-
-  if (status) {
-    res.status(200).send('RFID DB RESET');
-  } else {
-    res.status(500).send('RFID DB RESET ERROR!!!');
-  }
 });
 
 module.exports = router;

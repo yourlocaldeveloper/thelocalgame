@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import cn from 'classnames';
 
@@ -14,19 +14,65 @@ interface PlayerCardProps {
   stack: string;
   identifier: string;
   order: number;
+  isOriginallyActive?: boolean;
+}
+
+interface IPlayerData {
+  stack: string;
+  action?: string;
+  bet?: string;
+  isActive: boolean;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
-  const { name, stack, identifier, order } = props;
+  const { name, stack, identifier, order, isOriginallyActive } = props;
+
+  const [isActivePlayer, setIsActivePlayer] = useState(isOriginallyActive);
+  const [playerAction, setPlayerAction] = useState('');
+  const [playerStack, setPlayerStack] = useState(stack);
+  const [hasFolded, setHasFolded] = useState(false);
 
   const playerCardRef = useRef(null);
   const socketContext = useContext(SocketContext);
   const socket = socketContext.socket;
 
   useEffect(() => {
+    console.log(isOriginallyActive);
+  }, [isOriginallyActive]);
+
+  useEffect(() => {
     socket.on(identifier, (data) => {
-      console.log(data);
+      const playerData: IPlayerData = JSON.parse(data);
+
+      console.log('RECIEVED DATA:', playerData);
+
+      setIsActivePlayer(playerData.isActive);
+
+      setPlayerStack(playerData.stack);
+
+      if (!playerData.action) {
+        setPlayerAction('');
+
+        return;
+      }
+
+      if (playerData.action === 'fold') {
+        setPlayerAction(playerData.action.toUpperCase());
+        setTimeout(() => {
+          setHasFolded(true);
+        }, 2000);
+      } else {
+        setPlayerAction(
+          `${playerData.action} £${Number(playerData.bet).toFixed(
+            2
+          )}`.toUpperCase()
+        );
+      }
     });
+
+    return () => {
+      socket.off(identifier);
+    };
   }, [socket]);
 
   return (
@@ -38,7 +84,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     >
       <div
         ref={playerCardRef}
-        className={styles.playerCard}
+        className={cn(styles.playerCard, { [styles.hide]: hasFolded })}
         style={{ order: order }}
       >
         <div className={styles.topRow}>
@@ -49,11 +95,18 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
             <div className={styles.equity}>17%</div>
           </div>
         </div>
-        <div className={styles.middleRow}>
+        <div
+          className={cn(styles.middleRow, {
+            [styles.activePlayer]: isActivePlayer,
+          })}
+        >
           <div className={styles.name}>{name.toUpperCase()}</div>
-          <div className={styles.stack}>{stack}</div>
+          <div className={styles.stack}>{playerStack}</div>
         </div>
-        <div className={styles.bottomRow}>{/* Action Place Holder */}</div>
+        <div className={styles.bottomRow}>
+          {isActivePlayer && <div className={styles.dotFalling}></div>}
+          {!isActivePlayer && <div>{playerAction}</div>}
+        </div>
       </div>
     </CSSTransition>
   );

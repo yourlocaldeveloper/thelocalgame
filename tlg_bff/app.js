@@ -20,6 +20,66 @@ io.on('connection', (socket) => {
     console.log(data);
     io.emit('initialPlayerData', data);
   });
+
+  socket.on('submitEffectiveAction', (data) => {
+    console.log('[DISPLAY PLAYER]:', data);
+    io.emit('submitEffectiveAction', data);
+  });
+
+  socket.on('displayPlayer', (data) => {
+    console.log('[DISPLAY PLAYER]:', data);
+    io.emit('displayPlayer', data);
+  });
+
+  socket.on('resetLivestream', (data) => {
+    console.log(data);
+    io.emit('resetLivestream', data);
+  });
+
+  socket.on('1', (data) => {
+    console.log(data);
+    io.emit('1', data);
+  });
+
+  socket.on('2', (data) => {
+    console.log(data);
+    io.emit('2', data);
+  });
+
+  socket.on('3', (data) => {
+    console.log(data);
+    io.emit('3', data);
+  });
+
+  socket.on('4', (data) => {
+    console.log(data);
+    io.emit('4', data);
+  });
+
+  socket.on('5', (data) => {
+    console.log(data);
+    io.emit('5', data);
+  });
+
+  socket.on('6', (data) => {
+    console.log(data);
+    io.emit('6', data);
+  });
+
+  socket.on('7', (data) => {
+    console.log(data);
+    io.emit('7', data);
+  });
+
+  socket.on('8', (data) => {
+    console.log(data);
+    io.emit('8', data);
+  });
+
+  socket.on('9', (data) => {
+    console.log(data);
+    io.emit('9', data);
+  });
 });
 
 io.on('disconnect', (socket) => {
@@ -29,13 +89,6 @@ io.on('disconnect', (socket) => {
 app.locals.disableRFIDRoute = false;
 
 app.set('socketio', io);
-
-// const main = async () => {
-//   await mongoose.connect('mongodb://127.0.0.1:27017/thelocalgame');
-//   console.log('DATABASE: Connected');
-// };
-
-// main().catch((err) => console.log(err));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -52,15 +105,15 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
 app.use(express.json());
 
 app.use('/rfid', rfidRouter);
 
 app.use('/card', cardRouter);
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
 
 server.listen(3001, () => {
   console.log('listening on *:3000');

@@ -3,6 +3,7 @@ export type PlayerType = {
   stack?: string;
   active: boolean;
   seat: number;
+  isOriginallyActive: boolean;
 };
 
 export enum HandActionEnum {
