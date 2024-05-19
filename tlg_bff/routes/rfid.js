@@ -16,12 +16,24 @@ const handleRfidInput = (input, io) => {
     switch (antenna) {
       case 1:
         rfidRoute = 'seatOne';
+        io.emit('1-cards', {
+          msg: 'RFID - Sending',
+          uid: uid,
+        });
         break;
       case 4:
         rfidRoute = 'seatTwo';
+        io.emit('2-cards', {
+          msg: 'RFID - Sending',
+          uid: uid,
+        });
         break;
       case 8:
         rfidRoute = 'seatThree';
+        io.emit('3-cards', {
+          msg: 'RFID - Sending',
+          uid: uid,
+        });
         break;
     }
   } else if (device_name === deviceTwo) {
@@ -32,6 +44,10 @@ const handleRfidInput = (input, io) => {
         break;
       case 2:
         rfidRoute = 'seatFour';
+        io.emit('4-cards', {
+          msg: 'RFID - Sending',
+          uid: uid,
+        });
         break;
       case 5:
         rfidRoute = 'communityCards';
