@@ -21,6 +21,10 @@ io.on('connection', (socket) => {
     io.emit('initialPlayerData', data);
   });
 
+  socket.on('preflopOrder', (data) => {
+    io.emit('preflopOrder', data);
+  });
+
   socket.on('submitEffectiveAction', (data) => {
     console.log('[DISPLAY PLAYER]:', data);
     io.emit('submitEffectiveAction', data);

@@ -1,20 +1,15 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import Image from 'next/image';
 import cn from 'classnames';
 
 import styles from './PlayerCard.module.scss';
 
-import As from '../../../../public/images/cards/As.png';
-import cardBack from '../../../../public/images/cards/back.png';
+import cardBack from '../../../../public/images/cards/noCard.png';
 import background from '../../../../public/images/poker-background.png';
 import { SocketContext } from '../../../../providers/SocketContex';
-import { getCardFromUID } from './PlayerCard.helpers';
+import { CardStoreType } from '../../Live.helpers';
+import * as Images from './PlayerCard.images';
 
 interface PlayerCardProps {
   name: string;
@@ -22,6 +17,8 @@ interface PlayerCardProps {
   identifier: string;
   order: number;
   isOriginallyActive?: boolean;
+  position: string;
+  hand?: CardStoreType;
 }
 
 interface IPlayerData {
@@ -32,7 +29,8 @@ interface IPlayerData {
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
-  const { name, stack, identifier, order, isOriginallyActive } = props;
+  const { name, stack, identifier, order, isOriginallyActive, position, hand } =
+    props;
 
   const [isActivePlayer, setIsActivePlayer] = useState(isOriginallyActive);
   const [playerAction, setPlayerAction] = useState('');
@@ -44,27 +42,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
   const socketContext = useContext(SocketContext);
   const socket = socketContext.socket;
 
+  const CHIP_CURRENCY = '£';
+
   useEffect(() => {
     console.log(isOriginallyActive);
   }, [isOriginallyActive]);
-
-  const handlePlayerHandStore = useCallback(
-    (uid: string, socketRef: string) => {
-      const card = getCardFromUID(uid);
-      let playerHand: string[] = playerCards;
-
-      if (playerCards.length === 2) {
-        socket?.off(socketRef);
-        console.log('HAND STORE CARD DISABLE');
-        return;
-      }
-
-      playerHand.push(card);
-
-      setPlayerCards([...playerHand]);
-    },
-    [playerCards]
-  );
 
   useEffect(() => {
     socket.on(identifier, (data) => {
@@ -98,17 +80,19 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
       }
     });
 
-    socket.on(`${identifier}-cards`, (data) => {
-      // const playerCardData = JSON.parse(data);
-
-      console.log('RECIEVED CARDS:', data.uid);
-      handlePlayerHandStore(data?.uid, `${identifier}-cards`);
-    });
+    // UNRELATED BUT NOTING HERE.
+    // To figure out straddles we just add a Straddle action option pre flop. Then we can modify code for it to be a non closing effective action
 
     return () => {
       socket.off(identifier);
     };
   }, [socket]);
+
+  useEffect(() => {
+    if (hand) {
+      setPlayerCards(hand.cards);
+    }
+  }, [hand, playerCards, setPlayerCards]);
 
   return (
     <CSSTransition
@@ -122,15 +106,31 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         className={cn(styles.playerCard, { [styles.hide]: hasFolded })}
         style={{ order: order }}
       >
+        <div className={styles.cardRow}>
+          <div className={styles.cardImage}>
+            {playerCards[0] ? (
+              <Image
+                src={Images[`image${playerCards[0]}`]}
+                alt={playerCards[0]}
+              />
+            ) : (
+              <Image src={cardBack} alt={'Card Missing'} />
+            )}
+          </div>
+          <div className={styles.cardImage}>
+            {playerCards[1] ? (
+              <Image
+                src={Images[`image${playerCards[1]}`]}
+                alt={playerCards[1]}
+              />
+            ) : (
+              <Image src={cardBack} alt={'Card Missing'} />
+            )}
+          </div>
+        </div>
         <div className={styles.topRow}>
-          <div className={styles.cardsTest}>
-            {playerCards.length === 2 ? playerCards[0] : ''}
-          </div>
-          <div className={styles.cardsTest}>
-            {playerCards.length === 2 ? playerCards[1] : ''}
-          </div>
           <div className={styles.topRowInfo}>
-            <div className={styles.position}>{/* Position Place Holder */}</div>
+            <div className={styles.position}>{position}</div>
             <div className={styles.equity}>17%</div>
           </div>
         </div>
@@ -140,7 +140,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
           })}
         >
           <div className={styles.name}>{name.toUpperCase()}</div>
-          <div className={styles.stack}>{playerStack}</div>
+          <div className={styles.stack}>{`${CHIP_CURRENCY}${playerStack}`}</div>
         </div>
         <div className={styles.bottomRow}>
           {isActivePlayer && <div className={styles.dotFalling}></div>}
