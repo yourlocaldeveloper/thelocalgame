@@ -246,13 +246,20 @@ export const Live: React.FC = () => {
       socket.off('submitEffectiveAction');
       socket.off('displayPlayer');
       socket.off('resetLivestream');
-      socket?.off('seatOne');
-      socket?.off('seatTwo');
-      socket?.off('seatThree');
-      socket?.off('seatFour');
-      socket?.off('currentStreet');
+      socket.off('seatOne');
+      socket.off('seatTwo');
+      socket.off('seatThree');
+      socket.off('seatFour');
+      socket.off('currentStreet');
     };
-  }, [socket, playerCards, playerHandStore, effectiveAction, currentStreet]);
+  }, [
+    socket,
+    playerCards,
+    playerHandStore,
+    effectiveAction,
+    currentStreet,
+    setEffectiveAction,
+  ]);
 
   useEffect(() => {
     socket?.on('communityCards', (rfid) =>

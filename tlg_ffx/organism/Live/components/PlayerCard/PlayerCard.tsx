@@ -3,8 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import Image from 'next/image';
 import cn from 'classnames';
 
-import styles from './PlayerCard.module.scss';
-
+import allIn from '../../../../public/images/allin.png';
 import cardBack from '../../../../public/images/cards/noCard.png';
 import { SocketContext } from '../../../../providers/SocketContex';
 import { ActionType, CardStoreType, HandActionEnum } from '../../Live.helpers';
@@ -13,6 +12,8 @@ import {
   getBetWording,
   getWordingForEffectiveAction,
 } from './PlayerCard.helpers';
+
+import styles from './PlayerCard.module.scss';
 
 interface PlayerCardProps {
   name: string;
@@ -138,6 +139,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
 
   useEffect(() => {
     console.log('WORDING CALL');
+    console.log('effectiveAction', effectiveAction);
     const wording = getWordingForEffectiveAction(
       effectiveAction,
       playerCommited
@@ -146,7 +148,14 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     setActionWording(wording);
   }, [effectiveAction, playerCommited]);
 
-  useEffect(() => {}, [actionWording, playerAction]);
+  useEffect(() => {
+    console.log('effectiveAction', effectiveAction);
+  }, [effectiveAction]);
+
+  useEffect(() => {
+    // We reset the players commited money each street
+    setPlayerCommited('');
+  }, [street]);
 
   return (
     <CSSTransition
@@ -199,7 +208,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
           })}
         >
           <div className={styles.name}>{name.toUpperCase()}</div>
-          <div className={styles.stack}>{`${CHIP_CURRENCY}${playerStack}`}</div>
+          <div className={styles.stack}>
+            {playerStack === '0.00' && (
+              <Image src={allIn} alt='All In' width={35} />
+            )}
+            {playerStack !== '0.00' && `${CHIP_CURRENCY}${playerStack}`}
+          </div>
         </div>
         <div className={styles.bottomRow}>
           {isActivePlayer && effectiveAction.type === HandActionEnum.NON && (
