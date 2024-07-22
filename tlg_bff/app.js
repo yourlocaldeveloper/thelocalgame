@@ -84,6 +84,16 @@ io.on('connection', (socket) => {
     console.log(data);
     io.emit('9', data);
   });
+
+  socket.on('currentStreet', (data) => {
+    console.log('Current Street:', data);
+    io.emit('currentStreet', data);
+  });
+
+  socket.on('pot', (data) => {
+    console.log('Pot:', data);
+    io.emit('pot', data);
+  });
 });
 
 io.on('disconnect', (socket) => {

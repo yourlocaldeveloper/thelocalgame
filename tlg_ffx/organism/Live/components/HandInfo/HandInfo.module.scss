@@ -1,0 +1,76 @@
+@font-face {
+  font-family: 'MyriadProBold';
+  src: url('../../../../public/fonts/MYRIADPRO-BOLD.otf');
+}
+
+.handInfoContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  right: 25px;
+  bottom: 25px;
+  font-family: 'Myriad Pro', sans-serif;
+  font-family: 'MyriadProBold';
+}
+
+.communityCards {
+  display: flex;
+  align-items: center;
+  height: 25px;
+  width: 300px;
+  background-size: 300%;
+  background-color: #2b2b2b;
+  border-radius: 8px 8px 0 0;
+
+  .card {
+    margin-top: -25px;
+    padding-right: 5px;
+  }
+}
+
+.potContainer {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 300px;
+  background-image: url('../../../../public/images/poker-background.png');
+  background-size: 300%;
+  background-color: #2b2b2b;
+  font-size: 25px;
+  color: white;
+  span {
+    color: #ef4222;
+    display: inline-flex;
+    width: 60px;
+    margin: 0 10px;
+  }
+}
+
+.blindsContainer {
+  display: flex;
+  align-items: center;
+  height: 25px;
+  width: 300px;
+  color: white;
+  background-color: #2b2b2b;
+
+  span {
+    color: #ef4222;
+    display: inline-flex;
+    width: 60px;
+    margin: 0 10px;
+  }
+}
+
+.titleContainer {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 300px;
+  font-size: 20px;
+  background-color: #ef4222;
+  border-radius: 0 0 8px 8px;
+}

@@ -28,12 +28,38 @@
   }
 }
 
-.animatePlayerCard {
-  opacity: 0.1;
+.animatePlayerCardEnterActive {
+  opacity: 0;
+  transform: scale(0.1);
 }
 
-.animatePlayerCard-active {
+.animatePlayerCardEnterDone {
   opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.animatePlayerCardExitActive {
+  opacity: 1;
+}
+
+.animatePlayerCardExitDone {
+  opacity: 0;
+  transform: scale(0.1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.actionText {
+  animation: slideInFromLeft 300ms forwards;
 }
 
 .playerCard {

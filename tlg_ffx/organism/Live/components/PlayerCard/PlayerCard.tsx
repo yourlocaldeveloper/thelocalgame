@@ -6,18 +6,23 @@ import cn from 'classnames';
 import styles from './PlayerCard.module.scss';
 
 import cardBack from '../../../../public/images/cards/noCard.png';
-import background from '../../../../public/images/poker-background.png';
 import { SocketContext } from '../../../../providers/SocketContex';
-import { CardStoreType } from '../../Live.helpers';
+import { ActionType, CardStoreType, HandActionEnum } from '../../Live.helpers';
 import * as Images from './PlayerCard.images';
+import {
+  getBetWording,
+  getWordingForEffectiveAction,
+} from './PlayerCard.helpers';
 
 interface PlayerCardProps {
   name: string;
   stack: string;
+  effectiveAction: ActionType;
   identifier: string;
   order: number;
   isOriginallyActive?: boolean;
   position: string;
+  street: string;
   hand?: CardStoreType;
 }
 
@@ -26,17 +31,31 @@ interface IPlayerData {
   action?: string;
   bet?: string;
   isActive: boolean;
+  raiseCount: number;
 }
 
 export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
-  const { name, stack, identifier, order, isOriginallyActive, position, hand } =
-    props;
+  const {
+    name,
+    stack,
+    effectiveAction,
+    identifier,
+    order,
+    isOriginallyActive,
+    position,
+    street,
+    hand,
+  } = props;
 
   const [isActivePlayer, setIsActivePlayer] = useState(isOriginallyActive);
   const [playerAction, setPlayerAction] = useState('');
   const [playerStack, setPlayerStack] = useState(stack);
   const [playerCards, setPlayerCards] = useState([]);
   const [hasFolded, setHasFolded] = useState(false);
+  const [actionWording, setActionWording] = useState('');
+  const [playerCommited, setPlayerCommited] = useState('');
+  const [showPlayerCard, setShowPlayerCard] = useState(false);
+  const [showActionText, setShowActionText] = useState(false);
 
   const playerCardRef = useRef(null);
   const socketContext = useContext(SocketContext);
@@ -45,37 +64,60 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
   const CHIP_CURRENCY = '£';
 
   useEffect(() => {
+    setShowActionText(false);
+    setTimeout(() => {
+      setShowPlayerCard(true);
+    }, 500);
+  }, []);
+
+  useEffect(() => {
     console.log(isOriginallyActive);
   }, [isOriginallyActive]);
 
   useEffect(() => {
     socket.on(identifier, (data) => {
+      console.log('PLAYER CARD CALLED', identifier);
+
       const playerData: IPlayerData = JSON.parse(data);
+
+      const { isActive, stack, action, raiseCount, bet } = playerData;
 
       console.log('RECIEVED DATA:', playerData);
 
-      setIsActivePlayer(playerData.isActive);
+      setIsActivePlayer(isActive);
 
-      setPlayerStack(playerData.stack);
+      setPlayerStack(stack);
 
-      if (!playerData.action) {
+      if (!action) {
         setPlayerAction('');
 
         return;
       }
 
-      if (playerData.action === 'fold') {
-        setPlayerAction(playerData.action.toUpperCase());
+      setPlayerCommited(playerData.bet);
+
+      let betWording = action;
+
+      if (action === 'bet') {
+        betWording = getBetWording(raiseCount, street);
+      }
+
+      if (action === 'allin') {
+        betWording = 'banter jam';
+      }
+
+      if (action === 'fold') {
+        setPlayerAction(action.toUpperCase());
+        socket.off(identifier);
+        setShowPlayerCard(false);
         setTimeout(() => {
           setHasFolded(true);
-        }, 2000);
-      } else if (playerData.action === 'check') {
-        setPlayerAction(playerData.action.toUpperCase());
+        }, 500);
+      } else if (action === 'check') {
+        setPlayerAction(action.toUpperCase());
       } else {
         setPlayerAction(
-          `${playerData.action} £${Number(playerData.bet).toFixed(
-            2
-          )}`.toUpperCase()
+          `${betWording} £${Number(bet).toFixed(2)}`.toUpperCase()
         );
       }
     });
@@ -86,7 +128,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     return () => {
       socket.off(identifier);
     };
-  }, [socket]);
+  }, [socket, street]);
 
   useEffect(() => {
     if (hand) {
@@ -94,12 +136,29 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     }
   }, [hand, playerCards, setPlayerCards]);
 
+  useEffect(() => {
+    console.log('WORDING CALL');
+    const wording = getWordingForEffectiveAction(
+      effectiveAction,
+      playerCommited
+    );
+
+    setActionWording(wording);
+  }, [effectiveAction, playerCommited]);
+
+  useEffect(() => {}, [actionWording, playerAction]);
+
   return (
     <CSSTransition
-      classNames={styles.animatePlayerCard}
-      nodeRef={playerCardRef}
-      timeout={2000}
-      in={true}
+      classNames={{
+        enterActive: styles.animatePlayerCardEnterActive,
+        enterDone: styles.animatePlayerCardEnterDone,
+        exitActive: styles.animatePlayerCardExitActive,
+        exitDone: styles.animatePlayerCardExitDone,
+      }}
+      timeout={300}
+      mountOnEnter={true}
+      in={showPlayerCard}
     >
       <div
         ref={playerCardRef}
@@ -143,8 +202,15 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
           <div className={styles.stack}>{`${CHIP_CURRENCY}${playerStack}`}</div>
         </div>
         <div className={styles.bottomRow}>
-          {isActivePlayer && <div className={styles.dotFalling}></div>}
-          {!isActivePlayer && <div>{playerAction}</div>}
+          {isActivePlayer && effectiveAction.type === HandActionEnum.NON && (
+            <div className={styles.dotFalling}></div>
+          )}
+          {isActivePlayer && effectiveAction.type !== HandActionEnum.NON && (
+            <div className={styles.actionText}>{actionWording}</div>
+          )}
+          {!isActivePlayer && (
+            <div className={styles.actionText}>{playerAction}</div>
+          )}
         </div>
       </div>
     </CSSTransition>

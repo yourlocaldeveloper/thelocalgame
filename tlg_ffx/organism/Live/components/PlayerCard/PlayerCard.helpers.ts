@@ -1,3 +1,5 @@
+import { ActionType, HandActionEnum } from '../../Live.helpers';
+
 export const uidToCardValue = [
   {
     card: 'Ah',
@@ -216,5 +218,46 @@ export const getCardFromUID = (uid: string): string => {
     return value.card;
   } else {
     return 'error';
+  }
+};
+
+export const getWordingForEffectiveAction = (
+  effectiveAction: ActionType,
+  playerPrevBet?: string
+): string => {
+  if (effectiveAction.type === HandActionEnum.ALLIN || HandActionEnum.BET) {
+    let amountToCall = effectiveAction.bet;
+
+    if (playerPrevBet) {
+      console.log('TEST PREV BET');
+      amountToCall = String(
+        (Number(effectiveAction.bet) - Number(playerPrevBet)).toFixed(2)
+      );
+    }
+
+    return `£${amountToCall} TO CALL`;
+  }
+
+  return;
+};
+
+export const getBetWording = (raiseCount: number, street: string): string => {
+  console.log('getBetWording STREET:', street);
+  console.log('getBetWording raiseCount:', raiseCount);
+  if (street === 'preflop') {
+    if (raiseCount > 0) {
+      return `${String(2 + raiseCount)}-bet`;
+    }
+
+    return 'bet';
+  }
+
+  switch (raiseCount) {
+    case 0:
+      return 'bet';
+    case 1:
+      return 'raise';
+    default:
+      return `${String(1 + raiseCount)}-bet`;
   }
 };
