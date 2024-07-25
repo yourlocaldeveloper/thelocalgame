@@ -1,4 +1,7 @@
 {
   "name": "tlg_bff",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "poker-odds-calc": "^0.0.14"
+  }
 }

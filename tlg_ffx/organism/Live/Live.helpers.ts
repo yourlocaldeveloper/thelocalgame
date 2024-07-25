@@ -1,3 +1,5 @@
+import { TexasHoldem } from 'poker-odds-calc';
+
 export type PlayerType = {
   name: string;
   stack?: string;
@@ -9,6 +11,11 @@ export type PlayerType = {
 export type CardStoreType = {
   cards: string[];
   seat: number;
+};
+
+export type EquityStoreType = {
+  seat: number;
+  equity: string;
 };
 
 export enum HandActionEnum {
@@ -118,4 +125,57 @@ export const getPlayerPositionName = (
   const position = positionToName.find((pos) => pos.seat === playerOrder);
 
   return position.name;
+};
+
+export const handleEnableRFID = async () => {
+  const disableRFID = await fetch('http://192.168.0.17:8080/rfid/continue', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      return json;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  console.log('[RFID]: ENABLED', disableRFID);
+};
+
+export const getEquityPercentages = async (
+  players: PlayerType[],
+  cards: CardStoreType[],
+  communityCards?: string[]
+): Promise<EquityStoreType[]> => {
+  if (cards.length < 2) {
+    console.log('CATCH');
+    return [];
+  }
+
+  const equityReturn = await fetch('http://192.168.0.17:8080/rfid/equity', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ players, cards, communityCards }),
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      return json;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  const equity: EquityStoreType[] = equityReturn;
+
+  console.log('[EQUITY]: equity', equity);
+
+  return equity;
 };

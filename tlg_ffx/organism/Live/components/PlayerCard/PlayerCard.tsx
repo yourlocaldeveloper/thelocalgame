@@ -6,7 +6,12 @@ import cn from 'classnames';
 import allIn from '../../../../public/images/allin.png';
 import cardBack from '../../../../public/images/cards/noCard.png';
 import { SocketContext } from '../../../../providers/SocketContex';
-import { ActionType, CardStoreType, HandActionEnum } from '../../Live.helpers';
+import {
+  ActionType,
+  CardStoreType,
+  HandActionEnum,
+  EquityStoreType,
+} from '../../Live.helpers';
 import * as Images from './PlayerCard.images';
 import {
   getBetWording,
@@ -24,7 +29,11 @@ interface PlayerCardProps {
   isOriginallyActive?: boolean;
   position: string;
   street: string;
+  handleRemoveFoldedCards: (seat: number) => void;
+  seat: number;
+  getEquitites: () => Promise<void>;
   hand?: CardStoreType;
+  equity?: EquityStoreType;
 }
 
 interface IPlayerData {
@@ -45,7 +54,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     isOriginallyActive,
     position,
     street,
+    handleRemoveFoldedCards,
+    seat,
+    getEquitites,
     hand,
+    equity,
   } = props;
 
   const [isActivePlayer, setIsActivePlayer] = useState(isOriginallyActive);
@@ -57,6 +70,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
   const [playerCommited, setPlayerCommited] = useState('');
   const [showPlayerCard, setShowPlayerCard] = useState(false);
   const [showActionText, setShowActionText] = useState(false);
+  const [equityPercentage, setEquityPercentage] = useState('');
 
   const playerCardRef = useRef(null);
   const socketContext = useContext(SocketContext);
@@ -69,6 +83,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     setTimeout(() => {
       setShowPlayerCard(true);
     }, 500);
+    console.log('[EQ] Called By useEffect on Player Card');
+    getEquitites();
   }, []);
 
   useEffect(() => {
@@ -111,9 +127,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         setPlayerAction(action.toUpperCase());
         socket.off(identifier);
         setShowPlayerCard(false);
+        handleRemoveFoldedCards(seat);
         setTimeout(() => {
           setHasFolded(true);
-        }, 500);
+        }, 400);
       } else if (action === 'check') {
         setPlayerAction(action.toUpperCase());
       } else {
@@ -129,9 +146,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     return () => {
       socket.off(identifier);
     };
-  }, [socket, street]);
+  }, [socket, street, handleRemoveFoldedCards]);
 
   useEffect(() => {
+    console.log(`playerCard for seat ${seat}`, hand);
     if (hand) {
       setPlayerCards(hand.cards);
     }
@@ -156,6 +174,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
     // We reset the players commited money each street
     setPlayerCommited('');
   }, [street]);
+
+  useEffect(() => {
+    if (!equity) {
+      return;
+    }
+
+    const newEquityPercentage = equity.equity;
+
+    setTimeout(() => setEquityPercentage(newEquityPercentage), 500);
+  }, [equity]);
 
   return (
     <CSSTransition
@@ -199,7 +227,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         <div className={styles.topRow}>
           <div className={styles.topRowInfo}>
             <div className={styles.position}>{position}</div>
-            <div className={styles.equity}>17%</div>
+            <div className={styles.equity}>{equity && equityPercentage}</div>
           </div>
         </div>
         <div

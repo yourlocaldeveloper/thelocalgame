@@ -94,6 +94,11 @@ io.on('connection', (socket) => {
     console.log('Pot:', data);
     io.emit('pot', data);
   });
+
+  socket.on('setShowStreamOverlay', (data) => {
+    console.log('setShowStreamOverlay:', data);
+    io.emit('setShowStreamOverlay', data);
+  });
 });
 
 io.on('disconnect', (socket) => {

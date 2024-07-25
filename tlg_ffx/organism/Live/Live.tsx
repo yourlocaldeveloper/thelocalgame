@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
+import cn from 'classnames';
 
 import { SocketContext } from '../../providers/SocketContex';
 
@@ -7,12 +8,14 @@ import { PlayerCard } from './components/PlayerCard';
 import {
   ActionType,
   CardStoreType,
+  EquityStoreType,
   HandActionEnum,
   HandPlayerType,
   PlayerType,
   getOrderedCards,
   getPlayerPositionName,
   getPlayerPositionValue,
+  getEquityPercentages,
 } from './Live.helpers';
 import { getCardFromUID } from './components/PlayerCard/PlayerCard.helpers';
 import { HandInfo } from './components/HandInfo';
@@ -27,27 +30,28 @@ export const Live: React.FC = () => {
   const [currentStreet, setCurrentSteet] = useState('');
   const [currentPot, setCurrentPot] = useState('');
 
+  const [equityStore, setEquityStore] = useState<EquityStoreType[]>([]);
   const [playerCards, setPlayerCards] = useState<PlayerType[]>([]);
   const [playerHandStore, setPlayerHandStore] = useState<CardStoreType[]>([]);
   const [effectiveAction, setEffectiveAction] = useState<ActionType>();
+  const [showStreamOverlay, setShowStreamOverlay] = useState(false);
 
-  const displayPlayerCards = () => {
-    return playerCards.map((player) => (
-      <PlayerCard
-        name={player.name}
-        identifier={String(player.seat)}
-        effectiveAction={effectiveAction}
-        stack={player.stack}
-        order={getPlayerPositionValue(preflopOrder, player.seat)}
-        isOriginallyActive={player.isOriginallyActive}
-        hand={playerHandStore.find(
-          (playerHand) => playerHand.seat === player.seat
-        )}
-        position={getPlayerPositionName(preflopOrder, player.seat)}
-        street={currentStreet}
-      />
-    ));
-  };
+  const getEquitites = useCallback(async () => {
+    console.log('playerHandStore', playerHandStore);
+    console.log('playerHandStore playerCards', playerCards);
+    if (playerCards.length < 2) {
+      console.log('CATCH HERE');
+      return;
+    }
+
+    const equities = await getEquityPercentages(
+      playerCards,
+      playerHandStore,
+      communityCards
+    );
+
+    setEquityStore(equities);
+  }, [playerCards, communityCards, playerHandStore, setEquityStore]);
 
   const handleDisplayPlayer = useCallback(
     (player: PlayerType) => {
@@ -62,9 +66,15 @@ export const Live: React.FC = () => {
 
   const handlePlayerHandStore = useCallback(
     (uid: string, seat: number, socketRef: string) => {
+      console.log('HAND STORE CALLED OKAY');
+      if (currentStreet !== 'preflop') {
+        return;
+      }
+
       const handStore = [...playerHandStore];
       const card = getCardFromUID(uid);
       const playerHand = handStore.find((player) => player.seat === seat);
+      console.log('CARDS FROM', playerHand);
 
       if (playerHand) {
         const playerHandIndex = handStore.findIndex(
@@ -95,6 +105,8 @@ export const Live: React.FC = () => {
           const newAllPlayerHandStore = [...handStore];
           newAllPlayerHandStore[playerHandIndex] = playerHand;
 
+          console.log('STORE PLAYER HAND', seat);
+
           setPlayerHandStore(newAllPlayerHandStore);
 
           return;
@@ -105,13 +117,15 @@ export const Live: React.FC = () => {
           seat: seat,
         };
 
+        console.log('STORE PLAYER HAND', seat);
+
         setPlayerHandStore((currentPlayerHandStore) => [
           ...currentPlayerHandStore,
           newPlayerHand,
         ]);
       }
     },
-    [playerHandStore]
+    [playerHandStore, currentStreet]
   );
 
   const handleCommunityCardStore = useCallback(
@@ -179,9 +193,46 @@ export const Live: React.FC = () => {
     setCurrentSteet(street);
   };
 
+  const handleRemoveFoldedCards = useCallback(
+    (seat: number) => {
+      const newPlayerHandStore = playerHandStore.filter(
+        (hand) => hand.seat !== seat
+      );
+      console.log('playerHandStore REMOVED', newPlayerHandStore);
+      setPlayerHandStore(newPlayerHandStore);
+    },
+    [playerHandStore, setPlayerHandStore]
+  );
+
+  const displayPlayerCards = () => {
+    return playerCards.map((player) => (
+      <PlayerCard
+        name={player.name}
+        identifier={String(player.seat)}
+        effectiveAction={effectiveAction}
+        stack={player.stack}
+        order={getPlayerPositionValue(preflopOrder, player.seat)}
+        isOriginallyActive={player.isOriginallyActive}
+        hand={playerHandStore.find(
+          (playerHand) => playerHand.seat === player.seat
+        )}
+        position={getPlayerPositionName(preflopOrder, player.seat)}
+        street={currentStreet}
+        handleRemoveFoldedCards={handleRemoveFoldedCards}
+        seat={player.seat}
+        equity={
+          equityStore &&
+          equityStore.find((equity) => equity.seat === player.seat)
+        }
+        getEquitites={getEquitites}
+      />
+    ));
+  };
+
   useEffect(() => {
     socket.on('initialPlayerData', (data) => {
       const convertedData = JSON.parse(data);
+      setShowStreamOverlay(true);
       setInitialPlayerData(convertedData);
     });
 
@@ -228,6 +279,12 @@ export const Live: React.FC = () => {
       handleStreetStore(street);
     });
 
+    socket.on('setShowStreamOverlay', (data) => {
+      const shouldShowStreamOverlay: boolean = JSON.parse(data);
+      console.log('shouldShowStreamOverlay', shouldShowStreamOverlay);
+      setShowStreamOverlay(shouldShowStreamOverlay);
+    });
+
     socket.on('resetLivestream', (data) => {
       setCommunityCards([]);
       setCurrentSteet('');
@@ -238,6 +295,7 @@ export const Live: React.FC = () => {
         seat: 0,
         type: HandActionEnum.NON,
       });
+      setEquityStore([]);
     });
 
     return () => {
@@ -252,14 +310,7 @@ export const Live: React.FC = () => {
       socket.off('seatFour');
       socket.off('currentStreet');
     };
-  }, [
-    socket,
-    playerCards,
-    playerHandStore,
-    effectiveAction,
-    currentStreet,
-    setEffectiveAction,
-  ]);
+  }, [socket, handleDisplayPlayer, handlePlayerHandStore]);
 
   useEffect(() => {
     socket?.on('communityCards', (rfid) =>
@@ -289,16 +340,31 @@ export const Live: React.FC = () => {
     console.log('initialPlayerData:', initialPlayerData);
   }, [initialPlayerData]);
 
+  useEffect(() => {
+    console.log('[INFO] Called Equities');
+    if (
+      currentStreet !== 'preflop' ||
+      preflopOrder.length === playerCards.length
+    ) {
+      console.log('[EQ] Called By useEffect on Cards');
+      getEquitites();
+    }
+  }, [communityCards, playerHandStore, currentStreet, getEquitites]);
+
   return (
     <div className={styles.main}>
-      <div className={styles.playerCardHolder}>{displayPlayerCards()}</div>
-      {currentStreet && (
-        <HandInfo
-          communityCards={communityCards}
-          pot={`£${currentPot}`}
-          title='THE LOCAL GAME LIVE'
-        />
-      )}
+      <div
+        className={cn(styles.main, { [styles.hideMain]: !showStreamOverlay })}
+      >
+        <div className={styles.playerCardHolder}>{displayPlayerCards()}</div>
+        {currentStreet && (
+          <HandInfo
+            communityCards={communityCards}
+            pot={`£${currentPot}`}
+            title='THE LOCAL GAME LIVE'
+          />
+        )}
+      </div>
     </div>
   );
 };

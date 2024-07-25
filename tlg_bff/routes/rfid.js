@@ -1,7 +1,7 @@
 const express = require('express');
 const RFID = require('../model/rfid');
 const Card = require('../model/card');
-const { resetRFID } = require('../helpers/rfid');
+const { resetRFID, getEquityPercentages } = require('../helpers/rfid');
 const router = express.Router();
 
 const handleRfidInput = (input, io) => {
@@ -12,7 +12,6 @@ const handleRfidInput = (input, io) => {
   const deviceTwo = 'TLG_Device2';
 
   if (device_name === deviceOne) {
-    console.log('WORKS WITH DEVICE ONE');
     switch (antenna) {
       case 1:
         rfidRoute = 'seatOne';
@@ -37,7 +36,6 @@ const handleRfidInput = (input, io) => {
         break;
     }
   } else if (device_name === deviceTwo) {
-    console.log('WORKS WITH DEVICE TWO');
     switch (antenna) {
       case 1:
         rfidRoute = 'communityCards';
@@ -70,10 +68,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', (req, res) => {
   if (req.app.locals.disableRFIDRoute) {
-    console.log('JSON Denied: ', req.body);
     res.send(req.body);
   } else {
-    console.log('JSON Provided: ', req.body);
     res.send(req.body);
     const io = req.app.get('socketio');
     handleRfidInput(req.body, io);
@@ -90,6 +86,16 @@ router.post('/continue', (req, res) => {
   console.log('[NOTICE]: Allow RFID Card Information Being Sent');
   req.app.locals.disableRFIDRoute = false;
   res.send(req.body);
+});
+
+router.post('/equity', (req, res) => {
+  console.log('EQUITY REQ');
+  const { players, cards, communityCards } = req.body;
+
+  const equityReturn = getEquityPercentages(players, cards, communityCards);
+
+  console.log('equityReturn', equityReturn);
+  res.send(equityReturn);
 });
 
 module.exports = router;
