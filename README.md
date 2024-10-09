@@ -1,8 +1,8 @@
 # thelocalgame
 
-This is the respository holding the Stream Portion Front-end (tlg_ffx) and Back-end (tlg_bff) for the entirity of the RFID Poker Table.
+This is the repository holding the Stream Portion Front-end (tlg_ffx) and Back-end (tlg_bff) for the entirety of the RFID Poker Table.
 
-Learn more about this project on my [website][https://www.yourlocaldev.com/projects/rfid]
+Learn more about this project on my [website](https://www.yourlocaldev.com/projects/rfid)
 
 ## Notible files:
 
@@ -10,7 +10,7 @@ Learn more about this project on my [website][https://www.yourlocaldev.com/proje
 
 [Live.tsx](https://github.com/yourlocaldeveloper/thelocalgame/blob/develop/tlg_ffx/organism/Live/Live.tsx)
 
-Handles the green screen stream overlay displaying information about the game. Cards, player stack, community cards and more.
+Handles the green screen stream overlay displaying information about the game: cards, player stack, community cards, and more.
 
 ### Back-end | Express App
 
